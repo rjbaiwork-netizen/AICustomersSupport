@@ -1,34 +1,120 @@
-// Master Sync Configuration
-const SHEET_ID = 'আপনার_গুগল_শিট_আইডি_এখানে'; // গুগল শিট ইউআরএল থেকে আইডি দিন
-const TAB_NAME = 'Sheet1'; 
-const API_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${TAB_NAME}`;
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Support Dashboard - Live Sync</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #0f172a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .neon-text { color: #3b82f6; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+    </style>
+</head>
+<body class="min-h-screen">
 
-async function syncDashboard() {
-    try {
-        const response = await fetch(API_URL);
-        const text = await response.text();
-        const data = JSON.parse(text.substr(47).slice(0, -2));
+    <div class="container mx-auto px-4 py-10">
         
-        const rows = data.table.rows;
-        // উদাহরণ: শিটের প্রথম রো-তে যদি কোনো স্ট্যাটাস থাকে
-        const statusText = rows[0].c[0].v; 
-        document.getElementById('live-status').innerText = statusText;
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold neon-text mb-4">AI Customer Support</h1>
+            <p class="text-slate-400">রিয়েল-টাইম ডাটাবেজ এবং অটোমেশন ড্যাশবোর্ড</p>
+            <div id="status-badge" class="mt-4 inline-block px-4 py-1 rounded-full bg-green-500/20 text-green-400 text-sm border border-green-500/30">
+                <i class="fas fa-circle text-[8px] mr-2 animate-pulse"></i> 
+                Status: <span id="live-status">Loading...</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="glass p-8 rounded-3xl text-center">
+                <i class="fas fa-robot text-4xl mb-4 text-blue-500"></i>
+                <h3 class="text-xl font-bold mb-2">AI Solution</h3>
+                <p class="text-sm text-slate-400">স্বয়ংক্রিয় টেকনিক্যাল সমস্যার সমাধান।</p>
+            </div>
+            <div class="glass p-8 rounded-3xl text-center">
+                <i class="fas fa-database text-4xl mb-4 text-purple-500"></i>
+                <h3 class="text-xl font-bold mb-2">Secure Data</h3>
+                <p class="text-sm text-slate-400">আপনার তথ্য গুগল শিটে নিরাপদ।</p>
+            </div>
+            <div class="glass p-8 rounded-3xl text-center">
+                <i class="fas fa-headset text-4xl mb-4 text-green-500"></i>
+                <h3 class="text-xl font-bold mb-2">24/7 Support</h3>
+                <p class="text-sm text-slate-400">টেলিগ্রাম বটের মাধ্যমে সরাসরি যোগাযোগ।</p>
+            </div>
+        </div>
+
+        <div class="glass p-8 rounded-3xl">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-list-ul mr-3 text-blue-400"></i> Recent Updates (From Sheet)
+            </h2>
+            <div id="data-container" class="space-y-4">
+                <p class="text-slate-500">Connecting to Google Sheet...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ১. আপনার গুগল শিট কনফিগারেশন
+        const SHEET_ID = 'আপনার_গুগল_শিট_আইডি_এখানে'; // আপনার গুগল শিটের URL থেকে এই আইডিটি বসান
+        const TAB_NAME = 'Sheet1'; // আপনার শিটের ট্যাবের নাম
+        const API_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${TAB_NAME}`;
+
+        // ২. ডাটা সিঙ্ক ফাংশন
+        async function syncWithGoogleSheet() {
+            try {
+                const response = await fetch(API_URL);
+                const text = await response.text();
+                // গুগল শিট JSON ফরম্যাটে ডাটা ক্লিন করা
+                const jsonData = JSON.parse(text.substr(47).slice(0, -2));
+                const rows = jsonData.table.rows;
+
+                // লাইভ স্ট্যাটাস আপডেট (শিটের প্রথম কলামের প্রথম রো থেকে)
+                if (rows.length > 0) {
+                    document.getElementById('live-status').innerText = rows[0].c[0].v || "Active";
+                }
+
+                // ডাটা লিস্ট আপডেট করা
+                let htmlContent = "";
+                rows.slice(0, 5).forEach(row => { // শেষ ৫টি এন্ট্রি দেখাবে
+                    if (row.c[1] && row.c[1].v) {
+                        htmlContent += `
+                            <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                                <span class="text-blue-400 text-xs">${row.c[0] ? row.c[0].v : 'Update'}</span>
+                                <p class="text-slate-200">${row.c[1].v}</p>
+                            </div>
+                        `;
+                    }
+                });
+                document.getElementById('data-container').innerHTML = htmlContent || "No recent updates found.";
+
+            } catch (error) {
+                console.error("Sync Error:", error);
+                document.getElementById('live-status').innerText = "Offline";
+                document.getElementById('data-container').innerHTML = "<p class='text-red-400'>Error connecting to Google Sheets. Check Sheet ID and Permissions.</p>";
+            }
+        }
+
+        // ৩. টেলিগ্রাম মিনি অ্যাপ সেটিংস
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand(); // অ্যাপটি বড় করা
+            
+            // টেলিগ্রাম থিম অনুযায়ী রঙ পরিবর্তন
+            document.body.style.backgroundColor = tg.backgroundColor || "#0f172a";
+            
+            // মেইন বাটন সেটআপ
+            tg.MainButton.setText("Open Admin Panel").show().onClick(() => {
+                window.location.href = "admin.html";
+            });
+        }
+
+        // প্রতি ৩০ সেকেন্ডে অটো আপডেট হবে
+        setInterval(syncWithGoogleSheet, 30000);
         
-        console.log("Data Synced Successfully!");
-    } catch (error) {
-        console.error("Sync Error:", error);
-    }
-}
-
-// Telegram Mini App Support
-if (window.Telegram && window.Telegram.WebApp) {
-    const tg = window.Telegram.WebApp;
-    tg.expand(); // অ্যাপটি বড় আকারে ওপেন হবে
-    tg.MainButton.setText("Admin Panel").show().onClick(() => {
-        window.location.href = "admin.html";
-    });
-}
-
-// Auto-Sync every 30 seconds
-setInterval(syncDashboard, 30000);
-window.onload = syncDashboard;
+        // পেজ লোড হলে কল হবে
+        window.onload = syncWithGoogleSheet;
+    </script>
+</body>
+</html>
