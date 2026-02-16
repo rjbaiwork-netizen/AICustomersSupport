@@ -1,30 +1,36 @@
-name: Deploy GitHub Pages
+name: Master Ecosystem Deployer
 
 on:
   push:
-    branches: ["main"] # আপনার স্ক্রিনশটে 'main' ব্রাঞ্চ দেখা যাচ্ছে
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Validate Files
+        run: |
+          echo "Checking essential files..."
+          test -f index.html || exit 1
+          test -f admin.html || exit 1
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
-      - name: Upload artifact
+
+      - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
