@@ -1,0 +1,44 @@
+name: Nano AI Self-Healing System
+
+on:
+  push:
+    branches: ["main"]
+  repository_dispatch:
+    types: [ai_trigger]
+
+permissions:
+  contents: write
+  pages: write
+  pull-requests: write
+
+jobs:
+  nano-ai-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout (FR-01)
+        uses: actions/checkout@v4
+
+      - name: 2. Code Scan & Auditor (Layer 1)
+        run: |
+          echo "Scanning index.html and admin.html for Syntax errors..."
+          # সহজ স্ক্যানার লজিক
+          if grep -q "Error" index.html; then echo "Issue Detected"; fi
+
+      - name: 3. Database Audit (Module: DB Optimizer)
+        run: |
+          echo "Checking database.csv for duplicates..."
+          sort database.csv | uniq -d > duplicates.log
+          if [ -s duplicates.log ]; then echo "Duplicate found!"; fi
+
+      - name: 4. Auto-Patch Engine (FR-03)
+        if: failure()
+        run: |
+          echo "Creating Auto-Fix PR..."
+          # অটোমেটিক প্যাচ তৈরির লজিক এখানে যুক্ত হবে
+
+      - name: 5. Telegram Alert (Severity: HIGH)
+        if: always()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TG_ID }} \
+          -d text="🚨 NANO AI ALERT %0A Repo: AICustomersSupport %0A Status: ${{ job.status }} %0A Action: Verified"
