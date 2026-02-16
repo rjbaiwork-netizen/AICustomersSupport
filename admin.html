@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Master Control Panel v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .neon-border:hover { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); border-color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-slate-200">
+    <div class="flex">
+        <div class="w-64 h-screen glass p-5 hidden md:block">
+            <h2 class="text-xl font-bold mb-10 text-blue-400">AI Control Hub</h2>
+            <nav class="space-y-4">
+                <a href="#" class="block p-3 rounded-lg bg-blue-600">Dashboard</a>
+                <a href="#" class="block p-3 rounded-lg hover:bg-slate-700 transition">User Logs</a>
+                <a href="#" class="block p-3 rounded-lg hover:bg-slate-700 transition">GitHub Actions</a>
+                <a href="#" class="block p-3 rounded-lg hover:bg-slate-700 transition">Sheet Sync</a>
+                <a href="#" class="block p-3 rounded-lg hover:bg-slate-700 transition">Bot Config</a>
+            </nav>
+        </div>
+
+        <div class="flex-1 p-8">
+            <header class="flex justify-between items-center mb-10">
+                <h1 class="text-3xl font-bold">System Overview</h1>
+                <div class="flex gap-4">
+                    <span class="bg-green-500/20 text-green-400 px-4 py-1 rounded-full text-xs">System Online</span>
+                    <button onclick="location.reload()" class="text-slate-400 hover:text-white"><i class="fas fa-sync"></i></button>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass p-6 rounded-2xl neon-border">
+                    <p class="text-slate-400 text-sm">Total Users</p>
+                    <h3 class="text-2xl font-bold mt-2">1,284</h3>
+                </div>
+                <div class="glass p-6 rounded-2xl neon-border">
+                    <p class="text-slate-400 text-sm">Deployment Status</p>
+                    <h3 class="text-2xl font-bold text-blue-400 mt-2">Success</h3>
+                </div>
+                <div class="glass p-6 rounded-2xl neon-border">
+                    <p class="text-slate-400 text-sm">Database Sync</p>
+                    <h3 class="text-2xl font-bold text-green-400 mt-2">Active</h3>
+                </div>
+                <div class="glass p-6 rounded-2xl neon-border">
+                    <p class="text-slate-400 text-sm">Telegram Bot</p>
+                    <h3 class="text-2xl font-bold text-purple-400 mt-2">Running</h3>
+                </div>
+            </div>
+
+            <div class="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 glass p-8 rounded-3xl">
+                    <h2 class="text-xl font-bold mb-6">Automation Console</h2>
+                    <div class="space-y-4">
+                        <button class="w-full bg-slate-700 p-4 rounded-xl text-left flex justify-between">
+                            <span>Push Updates to GitHub</span>
+                            <i class="fas fa-code-branch"></i>
+                        </button>
+                        <button class="w-full bg-slate-700 p-4 rounded-xl text-left flex justify-between">
+                            <span>Clear Google Sheet Cache</span>
+                            <i class="fas fa-database"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="glass p-8 rounded-3xl">
+                    <h2 class="text-xl font-bold mb-6">Quick Settings</h2>
+                    <div class="flex flex-col gap-4 text-sm">
+                        <label class="flex items-center gap-2"><input type="checkbox" checked> Maintenance Mode</label>
+                        <label class="flex items-center gap-2"><input type="checkbox" checked> Telegram Webhook</label>
+                        <label class="flex items-center gap-2"><input type="checkbox"> AI Auto-Reply</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+                                                                 </html>
