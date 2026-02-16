@@ -1,0 +1,29 @@
+name: Master Database & Deployer
+
+on:
+  repository_dispatch: # টেলিগ্রাম বা মেক থেকে কমান্ড নিতে
+    types: [update_db]
+  workflow_dispatch: # ম্যানুয়ালি রান করতে
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Update CSV Database
+        run: |
+          echo "$(date),${{ github.event.client_payload.email }},${{ github.event.client_payload.action }},${{ github.event.client_payload.otp }},Active" >> database.csv
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add database.csv
+          git commit -m "Database Auto-Update"
+          git push
+
+      - name: Deploy to Pages
+        uses: actions/deploy-pages@v4
